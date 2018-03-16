@@ -6,8 +6,22 @@ id,parentId,name,size,segmentColor,shortCode,uriString
 5,3,1st Fix,2,#ffbb00,1ST,null
 6,3,2nd Fix,2,#ffbb00,2ND,null
 7,5,Electrics,3,#00bbff,ELEC,null
-8,6,Plumbing,3,#00bbff,PLUM,null
-9,5,Electrics,3,#00bbff,ELEC,null
+8,5,Plumbing,3,#00bbff,PLUM,null
+9,6,Electrics,3,#00bbff,ELEC,null
 10,6,Plumbing,3,#00bbff,PLUM,null
 11,3,Roof,2,#ffbb00,ROOF,null
 12,2,Planning Consent,2,#ffbb00,PLCO,null
+13,3,Plastering,2,#ffbb00,PLAS,null
+14,13,Boarding Out,3,#00bbff,PLBO,null
+15,13,Skimming,3,#00bbff,PLSK,null
+16,3,Timber Frame,2,#ffbb00,TIMB,null
+17,3,Wall Cladding,2,#ffbb00,CLAD,null
+18,3,Windows,2,#ffbb00,WIND,null
+19,2,Design Pack,2,#ffbb00,DESP,null
+20,19,Drawings,3,#00bbff,DRWG,null
+21,19,Structural Calculations,3,#00bbff,SRU,null
+22,20,Electrics,4,#00bbff,ELEC,null
+23,22,Lighting,5,#00bbff,ELLI,null
+24,22,Plug Sockets,5,#00bbff,ELSK,null
+25,20,Kitchen Layout,4,#00bbff,LYKI,null
+25,20,Bathroom Layout,4,#00bbff,LYBA,null
