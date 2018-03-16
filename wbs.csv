@@ -1,0 +1,13 @@
+id,parentId,name,size,segmentColor,shortCode,uriString
+1,null,Self Buld House,0,#ffbb00,SBH,null
+2,1,Design,1,#00bb00,DES,null
+3,1,Construction,1,#00bb00,CON,null
+4,3,Foundations,2,#ffbb00,FD,null
+5,3,1st Fix,2,#ffbb00,1ST,null
+6,3,2nd Fix,2,#ffbb00,2ND,null
+7,5,Electrics,3,#00bbff,ELEC,null
+8,6,Plumbing,3,#00bbff,PLUM,null
+9,5,Electrics,3,#00bbff,ELEC,null
+10,6,Plumbing,3,#00bbff,PLUM,null
+11,3,Roof,2,#ffbb00,ROOF,null
+12,2,Planning Consent,2,#ffbb00,PLCO,null

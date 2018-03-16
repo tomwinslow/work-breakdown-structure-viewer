@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<head>
+	<title>WBS Manager - Tree View</title>
+	<meta charset="utf-8">
+	<style type="text/css">
+
+		.node {
+	    cursor: pointer;
+	  }
+
+	  .overlay{
+	      background-color:#eef;
+	  }
+
+	  .node circle {
+	    fill: #fff;
+	    stroke: steelblue;
+	    stroke-width: 1.5px;
+	  }
+
+	  .node text {
+	    font-size:20px;
+	    font-family:sans-serif;
+	  }
+
+	  .link {
+	    fill: none;
+	    stroke: #666;
+	    stroke-width: 3px;
+	  }
+
+	  .templink {
+	    fill: none;
+	    stroke: red;
+	    stroke-width: 3px;
+	  }
+
+	  .ghostCircle.show{
+	      display:block;
+	  }
+
+	  .ghostCircle, .activeDrag .ghostCircle{
+	       display: none;
+	  }
+
+		.ui-autocomplete { position: absolute; cursor: default;z-index:30 !important;}
+
+		.found.show {
+			fill: #333;
+			stroke: #ff4136;
+		}
+
+
+	</style>
+
+	<!--jQuery-->
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+	<!--D3 js-->
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+
+	<!--Bootstramp-->
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+	<script type="text/javascript" src="base.js"></script>
+	<script type="text/javascript" src="DataStructures.Tree.js"></script>
+
+	<script src="script.js"></script>
+	
+</head>
+<body onload="initialise()">
+
+	<div style="position:fixed; top:0px; left:15px; z-index:10; width:1000px;">
+		<div class="row">
+		  <div class="col-sm-12">
+				<h1>Work Breakdown Structure (WBS) Manager</h1>
+			</div>
+		</div>
+		<div class="row">
+		  <div class="col-sm-3">
+				<div class="btn-group">
+					<div class="btn btn-success btn-sm" onclick="centerOnRoot();">Home</div>
+					<div class="btn btn-info btn-sm" onclick="collapseAll();">Collapse All</div>
+					<div class="btn btn-info btn-sm" onclick="expandAll();">Expand All</div>
+				</div>
+			</div>
+		  <div class="col-sm-9">
+				<form class="form-inline" role="form">
+				<div class="form-group">
+					<input id="nodeId" type="text" class="form-control form-sm" name="nodeId" style="width:600px;"/>
+					<div class="btn btn-primary btn-sm" onclick="searchAndZoom();">Search</div>
+				</div>
+				</form>
+			</div>
+		</div>
+		<div class="row">
+		  <div class="col-sm-12">
+				<div id="crumbTrail" style="padding:10px; height:20px; margin:15px;"></div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<div id="nodeOptionsContainer" style="position:fixed; top:15px; right:15px; z-index:10; display:none; width:300px;">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="pull-right close" onclick="closeNodeOptionsContainer()">&times;</div>
+				Selection details:
+			</div>
+		  <div class="panel-body">
+				<form role="form">
+					<div class="form-group">
+						<label for="selectedNodeName">Node:</label>
+						<input class="form-control" id="selectedNodeName" type="text" readonly>
+					</div>
+					<div class="form-group">
+						<label for="selectedNodeShortCode">Short code:</label>
+						<input class="form-control" id="selectedNodeShortCode" type="text" readonly>
+					</div>
+					<div class="form-group">
+						<!--hidden id-->
+						<input class="form-control" id="selectedNodeId" type="hidden">
+						<input class="form-control" id="selectedNodeURI" type="hidden">
+					</div>
+
+						<div id="editDetailsInAssetRegButton" class="btn btn-primary btn-block" onclick="loadAssetRegPopUp();" style="display:none;">Edit WBS Node Details</div>
+						<div id="expandAllChildrenButton" class="btn btn-info btn-block" onclick="expandAllNodeChildren();" style="display:none;">Expand all children</div>
+						<div id="collapseAllChildrenButton" class="btn btn-info btn-block" onclick="collapseAllNodeChildren();" style="display:none;">Collapse all children</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+  <div id="tree-container" style="width:100%; height:100%; position:fixed; top:0px; left:0px;"></div>
+
+	<!--link to the sunburst view-->
+	<div style="position:fixed; bottom:10px; right:10px; z-index:10;">
+		<a href="#" target="_blank">
+			Open WBS in Sunburst View <span class="glyphicon glyphicon-new-window"></span>
+		</a>
+	</div>
+
+
+
+<script>
+$(function() {
+		//create array of available tags
+		d3.csv("wbs.csv", function(rawData){
+			var availableTags = [];
+
+			for (i = 0; i < rawData.length; i++) {
+				availableTags.push(rawData[i].id + " - " + rawData[i].name + "  [ " + rawData[i].shortCode + " ] ");
+			}
+
+			$( "#nodeId" ).autocomplete({
+				source: availableTags
+			});
+
+		});
+	});
+
+	$(document).ready(function(){
+	    $(window).resize(function(){
+				  initialise2();
+	    });
+	});
+	</script>
+
+</body>
+</html>
